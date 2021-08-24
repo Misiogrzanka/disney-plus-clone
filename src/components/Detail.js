@@ -1,43 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useParams } from "react-router-dom";
+import db from "../firebase";
+import LoadingSpinner from "./LoadingSpinner";
 
 function Detail() {
+	const { id } = useParams();
+	const [movie, setMovie] = useState();
+
+	useEffect(() => {
+		db.collection("movies")
+			.doc(id)
+			.get()
+			.then((doc) => {
+				if (doc.exists) {
+					setMovie(doc.data());
+				} else {
+				}
+			});
+	}, [id]);
+
 	return (
 		<Container>
-			<Background>
-				<img
-					src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/4F39B7E16726ECF419DD7C49E011DD95099AA20A962B0B10AA1881A70661CE45/scale?width=1440&aspectRatio=1.78&format=jpeg"
-					alt="details"
-				/>
-			</Background>
-			<ImageTitle>
-				<img
-					src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/D7AEE1F05D10FC37C873176AAA26F777FC1B71E7A6563F36C6B1B497CAB1CEC2/scale?width=1440&aspectRatio=1.78"
-					alt="title"
-				/>
-			</ImageTitle>
-			<Controls>
-				<PlayButton>
-					<img src="/images/play-icon-black.png" alt="playButton" />
-					<span>PLAY</span>
-				</PlayButton>
-				<TrailerButton>
-					<img src="/images/play-icon-white.png" alt="trailerButton" />
-					<span>Trailer</span>
-				</TrailerButton>
-				<AddButton>
-					<span>+</span>
-				</AddButton>
-				<GroupWatchButton>
-					<img src="/images/group-icon.png" alt="groupWatchButton" />
-				</GroupWatchButton>
-			</Controls>
-			<SubTitle>2018 • 7m • Family, Fantasy, Kids, Animation</SubTitle>
-			<Description>
-				A Chinese mom who's sad when her grown son leaves home gets another
-				chance at motherhood when one of her dumplings springs to life. But she
-				finds that nothing stays cute and small forever.
-			</Description>
+			{movie && (
+				<>
+					<Background>
+						<img src={movie.backgroundImg} alt="details" />
+					</Background>
+					<ImageTitle>
+						<img src={movie.titleImg} alt="title" />
+					</ImageTitle>
+					<Controls>
+						<PlayButton>
+							<img src="/images/play-icon-black.png" alt="playButton" />
+							<span>PLAY</span>
+						</PlayButton>
+						<TrailerButton>
+							<img src="/images/play-icon-white.png" alt="trailerButton" />
+							<span>Trailer</span>
+						</TrailerButton>
+						<AddButton>
+							<span>+</span>
+						</AddButton>
+						<GroupWatchButton>
+							<img src="/images/group-icon.png" alt="groupWatchButton" />
+						</GroupWatchButton>
+					</Controls>
+					<SubTitle>{movie.subTitle}</SubTitle>
+					<Description>{movie.description}</Description>
+				</>
+			)}
+			{!movie && <LoadingSpinner />}
 		</Container>
 	);
 }
@@ -84,6 +97,7 @@ const ImageTitle = styled.div`
 const Controls = styled.div`
 	display: flex;
 	align-items: center;
+	margin-top: 30px;
 `;
 
 const PlayButton = styled.button`
@@ -129,6 +143,10 @@ const AddButton = styled.button`
 	span {
 		color: white;
 		font-size: 30px;
+	}
+
+	&:hover {
+		background: rgba(89, 89, 100, 0.6);
 	}
 `;
 
