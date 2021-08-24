@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { selectMovies } from "../features/movie/movieSlice";
 import { useSelector } from "react-redux";
 
 function Movies() {
 	const movies = useSelector(selectMovies);
-	console.log(movies);
 	return (
 		<Container>
 			<h4>Recommended for you</h4>
@@ -14,11 +14,13 @@ function Movies() {
 					movies.map((movie) => {
 						return (
 							<Wrap>
-								<img
-									key={movie.id}
-									src={movie.cardImg}
-									alt={`movie ${movie.id}`}
-								/>
+								<Link to={`/detail/${movie.id}`}>
+									<img
+										key={movie.id}
+										src={movie.cardImg}
+										alt={`movie ${movie.id}`}
+									/>
+								</Link>
 							</Wrap>
 						);
 					})}

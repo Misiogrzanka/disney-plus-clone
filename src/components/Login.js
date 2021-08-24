@@ -1,12 +1,33 @@
 import React from "react";
 import styled from "styled-components";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { auth, provider } from "../firebase";
+import { setUserLogin } from "../features/user/userSlice";
 
 function Login() {
+	const history = useHistory();
+	const dispatch = useDispatch();
+
+	const signIn = () => {
+		auth.signInWithPopup(provider).then((result) => {
+			let user = result.user;
+			dispatch(
+				setUserLogin({
+					name: user.displayName,
+					email: user.email,
+					photo: user.photoURL
+				})
+			);
+			history.push("/");
+		});
+	};
+
 	return (
 		<Container>
 			<CTA>
 				<CTALogoOne src="/images/cta-logo-one.svg" alt="logoOne" />
-				<SignUp>GET ALL THERE</SignUp>
+				<SignUp onClick={signIn}>GET ALL THERE</SignUp>
 				<Description>
 					Get Premier Access to Raya and the Last Dragon for an additional fee
 					with a Disney+ subscription. As of 03/26/21, the price of Disney+ and
